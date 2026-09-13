@@ -5,7 +5,7 @@ function App() {
     <>
       <header></header>
 
-      <section id="hero">Hero</section>
+      <section id="home">Home</section>
       <section id="projects">Projects</section>
       <section id="skills">Skills</section>
       <section id="experience">Experience</section>
