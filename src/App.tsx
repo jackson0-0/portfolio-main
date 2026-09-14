@@ -1,17 +1,36 @@
 import './App.css'
+import ipoImg from './assets/ipo.png'
+import optionsImg from './assets/options.png'
+import pokemonImg from './assets/pokemon.png'
+import { useState, useEffect } from 'react'
 
 function App() {
+  const [time, setTime] = useState('')
+
+  useEffect(() => {
+    const tick = () => {
+      setTime(new Date().toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' }))
+    }
+    tick()
+    const interval = setInterval(tick, 1000)
+    return () => clearInterval(interval)
+  }, [])
   return (
     <>
-      <header className="sticky top-0 z-50 flex justify-between items-center px-8 py-4 bg-[var(--bg)]/90 backdrop-blur border-b border-[var(--line)]">        <div className="text-lg font-[family-name:var(--font-title)] text-[var(--fg)]">
-        jackson<span className="text-[var(--teal)]">.</span>lam
-      </div>
-        <nav className="flex gap-8 text-sm text-[var(--fg-dim)]">
+      <header className="sticky top-0 z-50 grid grid-cols-[1fr_auto_1fr] items-center px-8 py-4 bg-[var(--bg)]/90 backdrop-blur border-b border-[var(--line)]">
+        <div className="text-lg font-[family-name:var(--font-title)] text-[var(--fg)]">
+          jackson<span className="text-[var(--teal)]">.</span>lam
+        </div>
+        <nav className="flex gap-8 text-sm text-[var(--fg-dim)] justify-self-center">
           <a href="#projects" className="hover:text-[var(--fg)]">Projects</a>
           <a href="#skills" className="hover:text-[var(--fg)]">Skills</a>
           <a href="#experience" className="hover:text-[var(--fg)]">Experience</a>
+          <a href="#hackathons" className="hover:text-[var(--fg)]">Hackathons</a>
           <a href="#contact" className="hover:text-[var(--fg)]">Contact</a>
         </nav>
+        <div className="justify-self-end font-[family-name:var(--font-small)] text-sm text-[var(--fg)]">
+          {time}
+        </div>
       </header>
 
       <section id="home" className="px-8 py-24 max-w-5xl mx-auto">
@@ -60,8 +79,8 @@ function App() {
         </div>
 
         <div className="grid grid-cols-2 border border-[var(--line)] mb-6 min-h-[280px]">
-          <div className="border-r border-[var(--line)] flex items-center justify-center">
-            <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">demo screenshot</span>
+          <div className="border-r border-[var(--line)] overflow-hidden">
+            <img src={ipoImg} alt="IPO Calendar & Analyzer screenshot" className="w-full h-full object-cover" />
           </div>
           <div className="p-6 flex flex-col gap-3">
             <span className="font-[family-name:var(--font-small)] text-xs text-[var(--teal)] border border-[var(--teal)] px-2 py-1 self-start">live</span>
@@ -82,8 +101,8 @@ function App() {
         </div>
 
         <div className="grid grid-cols-2 border border-[var(--line)] mb-6 min-h-[280px]">
-          <div className="border-r border-[var(--line)] flex items-center justify-center">
-            <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">demo screenshot</span>
+          <div className="border-r border-[var(--line)] overflow-hidden">
+            <img src={optionsImg} alt="Options Analytics Dashboard screenshot" className="w-full h-full object-cover" />
           </div>
           <div className="p-6 flex flex-col gap-3">
             <span className="font-[family-name:var(--font-small)] text-xs text-[var(--amber)] border border-[var(--amber)] px-2 py-1 self-start">building</span>
@@ -103,8 +122,8 @@ function App() {
         </div>
 
         <div className="grid grid-cols-2 border border-[var(--line)] min-h-[280px]">
-          <div className="border-r border-[var(--line)] flex items-center justify-center">
-            <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">demo screenshot</span>
+          <div className="border-r border-[var(--line)] overflow-hidden">
+            <img src={pokemonImg} alt="Pokémon Team Builder screenshot" className="w-full h-full object-cover" />
           </div>
           <div className="p-6 flex flex-col gap-3">
             <span className="font-[family-name:var(--font-small)] text-xs text-[var(--amber)] border border-[var(--amber)] px-2 py-1 self-start">building</span>
@@ -297,7 +316,9 @@ function App() {
         </div>
       </section>
 
-      <footer></footer>
+      <footer className="border-t border-[var(--line)] px-8 py-7 flex justify-between font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">
+        <span>jackson lam © 2026</span>
+      </footer>
     </>
   )
 }
