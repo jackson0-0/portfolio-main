@@ -1,7 +1,19 @@
 @import "tailwindcss";
 
 :root {
+  --teal: #5fb3a3;
+  --amber: #e8c468;
+  --bg: #0c0d0f;
+  --fg: #eceae4;
+  --fg-dim: #8b8d94;
+  --line: #22242a;
+
   --font-title: 'Fraunces', serif;
   --font-body: 'Inter', sans-serif;
   --font-small: 'IBM Plex Mono', monospace;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
 }
