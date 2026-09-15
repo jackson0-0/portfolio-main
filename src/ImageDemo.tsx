@@ -10,11 +10,11 @@ function ImageDemo() {
         setLoading(true)
         setCaption('')
 
-        const imgRes = await fetch('http://localhost:3001/api/image')
+        const imgRes = await fetch('https://portfolio-main-xxxx.onrender.com/api/image')
         const imgData = await imgRes.json()
         setImage(imgData)
 
-        const capRes = await fetch('http://localhost:3001/api/caption', {
+        const capRes = await fetch('https://portfolio-main-xxxx.onrender.com/api/caption', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query: imgData.query }),
