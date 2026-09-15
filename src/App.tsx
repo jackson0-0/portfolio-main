@@ -3,6 +3,7 @@ import About from './About'
 import ipoImg from './assets/ipo.png'
 import optionsImg from './assets/options.png'
 import pokemonImg from './assets/pokemon.png'
+import resumePdf from './assets/JacksonLamResume.pdf?url'
 import { useState, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import ProjectDetail from './ProjectDetail'
@@ -10,6 +11,13 @@ import ImageDemo from './ImageDemo'
 
 function App() {
   const [time, setTime] = useState('')
+  const [copied, setCopied] = useState(false)
+
+  const copyEmail = () => {
+    navigator.clipboard.writeText('jacksonlam510@gmail.com')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
 
   useEffect(() => {
     const tick = () => {
@@ -62,7 +70,7 @@ function App() {
               <a href="#projects" className="px-5 py-3 bg-[var(--teal)] text-black text-sm font-[family-name:var(--font-small)]">
                 see the work
               </a>
-              <a href="#" target="_blank" className="px-5 py-3 border border-[var(--line)] text-sm font-[family-name:var(--font-small)] text-[var(--fg-dim)]">
+              <a href={resumePdf} target="_blank" className="px-5 py-3 border border-[var(--line)] text-sm font-[family-name:var(--font-small)] text-[var(--fg-dim)]">
                 resume ↗
               </a>
               <a href="#contact" className="px-5 py-3 border border-[var(--line)] text-sm font-[family-name:var(--font-small)] text-[var(--fg-dim)]">
@@ -263,27 +271,22 @@ function App() {
 
             <div className="grid grid-cols-2 gap-12">
               <div>
-                <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] mb-2 block">NEXT AVAILABLE — 30 MIN CALL</span>
-                <div className="grid grid-cols-3 gap-2 mb-9">
-                  <button className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] border border-[var(--line)] py-2 hover:border-[var(--teal)] hover:text-[var(--teal)]">Mon 2:00p</button>
-                  <button className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] border border-[var(--line)] py-2 hover:border-[var(--teal)] hover:text-[var(--teal)]">Mon 3:30p</button>
-                  <button className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] border border-[var(--line)] py-2 hover:border-[var(--teal)] hover:text-[var(--teal)]">Tue 10:00a</button>
-                  <button className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] border border-[var(--line)] py-2 hover:border-[var(--teal)] hover:text-[var(--teal)]">Tue 1:00p</button>
-                  <button className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] border border-[var(--line)] py-2 hover:border-[var(--teal)] hover:text-[var(--teal)]">Wed 11:30a</button>
-                  <button className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] border border-[var(--line)] py-2 hover:border-[var(--teal)] hover:text-[var(--teal)]">Thu 4:00p</button>
-                </div>
+                <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] mb-2 block">BOOK A 30 MIN CALL</span>
+                <a href="https://cal.com/jackson-lam-uzx9ef/30min" target="_blank" className="block text-center font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] border border-[var(--line)] py-2 mb-9 hover:border-[var(--teal)] hover:text-[var(--teal)]">
+                  see open times →
+                </a>
                 <div className="border-t border-[var(--line)]">
                   <div className="flex justify-between py-3.5 border-b border-[var(--line)] text-sm">
                     <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">EMAIL</span>
-                    <span className="text-[var(--fg)]">jacksonlam510@gmail.com</span>
+                    <button onClick={copyEmail} className="text-[var(--fg)] hover:text-[var(--teal)]">{copied ? 'copied!' : 'jacksonlam510@gmail.com'}</button>
                   </div>
                   <div className="flex justify-between py-3.5 border-b border-[var(--line)] text-sm">
                     <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">LINKEDIN</span>
-                    <span className="text-[var(--fg)]">linkedin.com/in/jacksonlam</span>
+                    <a href="https://www.linkedin.com/in/jacksonlam227/" target="_blank" className="text-[var(--fg)] hover:text-[var(--teal)]">linkedin.com/in/jacksonlam227</a>
                   </div>
                   <div className="flex justify-between py-3.5 border-b border-[var(--line)] text-sm">
                     <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">GITHUB</span>
-                    <span className="text-[var(--fg)]">github.com/jackson0-0</span>
+                    <a href="https://github.com/jackson0-0" target="_blank" className="text-[var(--fg)] hover:text-[var(--teal)]">github.com/jackson0-0</a>
                   </div>
                   <div className="flex justify-between py-3.5 border-b border-[var(--line)] text-sm">
                     <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">TIMEZONE</span>
@@ -295,7 +298,7 @@ function App() {
                   </div>
                   <div className="flex justify-between py-3.5 border-b border-[var(--line)] text-sm">
                     <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">RESUME</span>
-                    <span className="text-[var(--fg)]">download ↗</span>
+                    <a href={resumePdf} target="_blank" className="text-[var(--fg)] hover:text-[var(--teal)]">download ↗</a>
                   </div>
                 </div>
               </div>
