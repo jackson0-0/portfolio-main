@@ -1,10 +1,12 @@
 import './App.css'
+import About from './About'
 import ipoImg from './assets/ipo.png'
 import optionsImg from './assets/options.png'
 import pokemonImg from './assets/pokemon.png'
 import { useState, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import ProjectDetail from './ProjectDetail'
+import ImageDemo from './ImageDemo'
 
 function App() {
   const [time, setTime] = useState('')
@@ -27,10 +29,12 @@ function App() {
               jackson<span className="text-[var(--teal)]">.</span>lam
             </div>
             <nav className="flex gap-8 text-sm text-[var(--fg-dim)] justify-self-center">
+              <Link to="/about" className="hover:text-[var(--fg)]">About</Link>
               <a href="#projects" className="hover:text-[var(--fg)]">Projects</a>
               <a href="#skills" className="hover:text-[var(--fg)]">Skills</a>
               <a href="#experience" className="hover:text-[var(--fg)]">Experience</a>
               <a href="#hackathons" className="hover:text-[var(--fg)]">Hackathons</a>
+              <Link to="/demo" className="hover:text-[var(--fg)]">Demo</Link>
               <a href="#contact" className="hover:text-[var(--fg)]">Contact</a>
             </nav>
             <div className="justify-self-end font-[family-name:var(--font-small)] text-sm text-[var(--fg)]">
@@ -98,9 +102,9 @@ function App() {
                   <span className="border border-[var(--line)] px-2 py-1">Node.js</span>
                   <span className="border border-[var(--line)] px-2 py-1">MongoDB</span>
                 </div>
-                <div className="flex gap-4 text-sm pt-2">
-                  <Link to="/projects/ipo-analyzer" className="underline text-[var(--fg)]">preview</Link>
-                </div>
+                <Link to="/projects/ipo-analyzer" className="self-end mt-auto font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] border border-[var(--line)] px-4 py-2 hover:border-[var(--teal)] hover:text-[var(--teal)]">
+                  preview
+                </Link>
               </div>
             </div>
 
@@ -119,9 +123,9 @@ function App() {
                   <span className="border border-[var(--line)] px-2 py-1">FastAPI</span>
                   <span className="border border-[var(--line)] px-2 py-1">PostgreSQL</span>
                 </div>
-                <div className="flex gap-4 text-sm pt-2">
-                  <Link to="/projects/options-dashboard" className="underline text-[var(--fg)]">preview</Link>
-                </div>
+                <Link to="/projects/options-dashboard" className="self-end mt-auto font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] border border-[var(--line)] px-4 py-2 hover:border-[var(--teal)] hover:text-[var(--teal)]">
+                  preview
+                </Link>
               </div>
             </div>
 
@@ -140,9 +144,9 @@ function App() {
                   <span className="border border-[var(--line)] px-2 py-1">Node.js</span>
                   <span className="border border-[var(--line)] px-2 py-1">MongoDB</span>
                 </div>
-                <div className="flex gap-4 text-sm pt-2">
-                  <Link to="/projects/pokemon-team-builder" className="underline text-[var(--fg)]">preview</Link>
-                </div>
+                <Link to="/projects/pokemon-team-builder" className="self-end mt-auto font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] border border-[var(--line)] px-4 py-2 hover:border-[var(--teal)] hover:text-[var(--teal)]">
+                  preview
+                </Link>
               </div>
             </div>
           </section>
@@ -322,9 +326,12 @@ function App() {
 
           <footer className="border-t border-[var(--line)] px-8 py-7 flex justify-between font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">
             <span>jackson lam © 2026</span>
+            <span>{time}</span>
           </footer>
         </>
       } />
+      <Route path="/about" element={<About />} />
+      <Route path="/demo" element={<ImageDemo />} />
       <Route path="/projects/:slug" element={<ProjectDetail />} />
     </Routes>
   )
