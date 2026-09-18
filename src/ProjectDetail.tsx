@@ -67,7 +67,9 @@ function ProjectDetail() {
                 <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">full screenshot / demo gif</span>
             </div>
 
-            <div className="max-w-4xl mx-auto px-8 grid grid-cols-2 gap-8 mb-10">
+            {/* Same fix as App.tsx's project cards/contact section: grid-cols-1 stacks Problem
+                above Build on mobile, md:grid-cols-2 puts them side by side once there's room. */}
+            <div className="max-w-4xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
                 <div>
                     <div className="font-[family-name:var(--font-small)] text-xs text-[var(--teal)] mb-2">THE PROBLEM</div>
                     <p className="text-sm text-[var(--fg-dim)] leading-relaxed">{project.problem}</p>

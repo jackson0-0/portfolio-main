@@ -16,6 +16,9 @@ function App() {
   // the effect below a single place to compute the first real value.
   const [time, setTime] = useState('')
   const [copied, setCopied] = useState(false)
+  // Tracks whether the mobile nav dropdown is open. Only used below `md:` — on wider screens
+  // the full nav is always visible and this is ignored.
+  const [menuOpen, setMenuOpen] = useState(false)
 
   // Event handler for the email button. navigator.clipboard.writeText is the async Clipboard
   // API (requires a secure context — https or localhost). We don't await it here since we don't
@@ -56,17 +59,25 @@ function App() {
         // A Fragment (<>...</>) groups sibling elements (header, sections, footer) into one
         // value without adding an extra wrapper element to the actual DOM.
         <>
-          {/* `sticky top-0 z-50` keeps the header pinned to the viewport top while scrolling
-              (position: sticky) and stacks it above other content (z-index). The `var(--x)`
-              values inside Tailwind's square-bracket "arbitrary value" syntax (e.g. bg-[var(--bg)])
-              reference CSS custom properties defined once in index.css (:root { --bg: ...; }) —
-              a common pattern for keeping a design system's tokens (colors, fonts) in one place
-              instead of repeating raw hex codes across every className. */}
-          <header className="sticky top-0 z-50 grid grid-cols-[1fr_auto_1fr] items-center px-8 py-4 bg-[var(--bg)]/90 backdrop-blur border-b border-[var(--line)]">
+          {/* `sticky top-0 z-50` keeps this whole wrapper (header + mobile dropdown) pinned to
+              the viewport top while scrolling (position: sticky) and stacks it above other
+              content (z-index). It moved here from the header itself so the dropdown below —
+              positioned `absolute` relative to this sticky box — stays anchored under the header
+              no matter how far the page has scrolled, instead of scrolling away with the page. */}
+          <div className="sticky top-0 z-50">
+          {/* The `var(--x)` values inside Tailwind's square-bracket "arbitrary value" syntax
+              (e.g. bg-[var(--bg)]) reference CSS custom properties defined once in index.css
+              (:root { --bg: ...; }) — a common pattern for keeping a design system's tokens
+              (colors, fonts) in one place instead of repeating raw hex codes across every
+              className. */}
+          <header className="grid grid-cols-[1fr_auto_1fr] items-center px-8 py-4 bg-[var(--bg)]/90 backdrop-blur border-b border-[var(--line)]">
             <div className="text-lg font-[family-name:var(--font-title)] text-[var(--fg)]">
               jackson<span className="text-[var(--teal)]">.</span>lam
             </div>
-            <nav className="flex gap-8 text-sm text-[var(--fg-dim)] justify-self-center">
+            {/* `hidden md:flex` — invisible below the md breakpoint (768px), a flex row at/above
+                it. This is the same nav as before, just switched off on mobile since 7 items
+                have nowhere to fit on a narrow screen. */}
+            <nav className="hidden md:flex gap-8 text-sm text-[var(--fg-dim)] justify-self-center">
               {/* <Link> (React Router) intercepts the click and uses the History API to swap
                   routes client-side — no full page reload. A plain <a href> below, by contrast,
                   is a same-page hash anchor (browser-native scroll-to-element, no router
@@ -79,10 +90,35 @@ function App() {
               <Link to="/demo" className="hover:text-[var(--fg)]">Demo</Link>
               <a href="#contact" className="hover:text-[var(--fg)]">Contact</a>
             </nav>
-            <div className="justify-self-end font-[family-name:var(--font-small)] text-sm text-[var(--fg)]">
+            <div className="flex items-center gap-4 justify-self-end font-[family-name:var(--font-small)] text-sm text-[var(--fg)]">
               {time}
+              {/* Hamburger button — mirror image of the nav above: hidden at/above md, visible
+                  only on mobile. Toggles the `menuOpen` state, which the dropdown below reads. */}
+              <button className="md:hidden text-lg leading-none" onClick={() => setMenuOpen(!menuOpen)}>
+                {menuOpen ? '✕' : '☰'}
+              </button>
             </div>
           </header>
+
+          {/* The mobile dropdown itself: only rendered when menuOpen is true, and `md:hidden`
+              so even if it were open it can never show once the screen is wide enough for the
+              real nav. Same links as above, just stacked vertically instead of in a row.
+              `absolute inset-x-0 top-full` takes it out of normal document flow and pins it to
+              the bottom edge of the sticky wrapper above (its nearest positioned ancestor) —
+              that's what makes it float OVER the page content below instead of pushing that
+              content down and then scrolling away with it. */}
+          {menuOpen && (
+            <div className="md:hidden absolute inset-x-0 top-full flex flex-col gap-4 px-8 py-6 text-sm text-[var(--fg-dim)] bg-[var(--bg)] border-b border-[var(--line)]">
+              <Link to="/about" onClick={() => setMenuOpen(false)} className="hover:text-[var(--fg)]">About</Link>
+              <a href="#projects" onClick={() => setMenuOpen(false)} className="hover:text-[var(--fg)]">Projects</a>
+              <a href="#skills" onClick={() => setMenuOpen(false)} className="hover:text-[var(--fg)]">Skills</a>
+              <a href="#experience" onClick={() => setMenuOpen(false)} className="hover:text-[var(--fg)]">Experience</a>
+              <a href="#hackathons" onClick={() => setMenuOpen(false)} className="hover:text-[var(--fg)]">Hackathons</a>
+              <Link to="/demo" onClick={() => setMenuOpen(false)} className="hover:text-[var(--fg)]">Demo</Link>
+              <a href="#contact" onClick={() => setMenuOpen(false)} className="hover:text-[var(--fg)]">Contact</a>
+            </div>
+          )}
+          </div>
 
           {/* Each section below has an `id`. The nav's `href="#projects"` etc. are plain
               same-page anchor links — the browser jumps to whichever element has that id, no
@@ -133,7 +169,9 @@ function App() {
               <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">01 / demos</span>
             </div>
 
-            <div className="grid grid-cols-2 border border-[var(--line)] mb-6 min-h-[280px]">
+            {/* grid-cols-1 (mobile default) stacks image above text; md:grid-cols-2 restores
+                the side-by-side layout once the screen is wide enough for both to fit. */}
+            <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--line)] mb-6 min-h-[280px]">
               <div className="border-r border-[var(--line)] overflow-hidden">
                 <img src={ipoImg} alt="IPO Calendar & Analyzer screenshot" className="w-full h-full object-cover" />
               </div>
@@ -154,7 +192,9 @@ function App() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 border border-[var(--line)] mb-6 min-h-[280px]">
+            {/* grid-cols-1 (mobile default) stacks image above text; md:grid-cols-2 restores
+                the side-by-side layout once the screen is wide enough for both to fit. */}
+            <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--line)] mb-6 min-h-[280px]">
               <div className="border-r border-[var(--line)] overflow-hidden">
                 <img src={optionsImg} alt="Options Analytics Dashboard screenshot" className="w-full h-full object-cover" />
               </div>
@@ -175,7 +215,7 @@ function App() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 border border-[var(--line)] min-h-[280px]">
+            <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--line)] min-h-[280px]">
               <div className="border-r border-[var(--line)] overflow-hidden">
                 <img src={pokemonImg} alt="Pokémon Team Builder screenshot" className="w-full h-full object-cover" />
               </div>
@@ -203,7 +243,7 @@ function App() {
               <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">02 / skills</span>
             </div>
 
-            <div className="grid grid-cols-3 border border-[var(--line)]">
+            <div className="grid grid-cols-1 sm:grid-cols-3 border border-[var(--line)]">
               <div className="p-6 border-r border-[var(--line)]">
                 <h4 className="font-[family-name:var(--font-small)] text-xs text-[var(--teal)] mb-4">FRONTEND</h4>
                 <div className="flex flex-wrap gap-2">
@@ -307,34 +347,39 @@ function App() {
               available now — replies within 24h
             </div>
 
-            <div className="grid grid-cols-2 gap-12">
+            {/* grid-cols-1 stacks the info list above the form on mobile; md:grid-cols-2 puts
+                them side by side once there's room for both. */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div>
                 <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] mb-2 block">BOOK A 30 MIN CALL</span>
                 <a href="https://cal.com/jackson-lam-uzx9ef/30min" target="_blank" className="block text-center font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] border border-[var(--line)] py-2 mb-9 hover:border-[var(--teal)] hover:text-[var(--teal)]">
                   see open times →
                 </a>
                 <div className="border-t border-[var(--line)]">
-                  <div className="flex justify-between py-3.5 border-b border-[var(--line)] text-sm">
+                  {/* flex-col stacks label above value on mobile (fixes them overlapping when
+                      squeezed onto one row); md:flex-row md:justify-between restores the
+                      side-by-side layout once there's enough width. */}
+                  <div className="flex flex-col md:flex-row md:justify-between py-3.5 border-b border-[var(--line)] text-sm">
                     <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">EMAIL</span>
                     <button onClick={copyEmail} className="text-[var(--fg)] hover:text-[var(--teal)]">{copied ? 'copied!' : 'jacksonlam510@gmail.com'}</button>
                   </div>
-                  <div className="flex justify-between py-3.5 border-b border-[var(--line)] text-sm">
+                  <div className="flex flex-col md:flex-row md:justify-between py-3.5 border-b border-[var(--line)] text-sm">
                     <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">LINKEDIN</span>
                     <a href="https://www.linkedin.com/in/jacksonlam227/" target="_blank" className="text-[var(--fg)] hover:text-[var(--teal)]">linkedin.com/in/jacksonlam227</a>
                   </div>
-                  <div className="flex justify-between py-3.5 border-b border-[var(--line)] text-sm">
+                  <div className="flex flex-col md:flex-row md:justify-between py-3.5 border-b border-[var(--line)] text-sm">
                     <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">GITHUB</span>
                     <a href="https://github.com/jackson0-0" target="_blank" className="text-[var(--fg)] hover:text-[var(--teal)]">github.com/jackson0-0</a>
                   </div>
-                  <div className="flex justify-between py-3.5 border-b border-[var(--line)] text-sm">
+                  <div className="flex flex-col md:flex-row md:justify-between py-3.5 border-b border-[var(--line)] text-sm">
                     <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">TIMEZONE</span>
                     <span className="text-[var(--fg)]">America/Los_Angeles</span>
                   </div>
-                  <div className="flex justify-between py-3.5 border-b border-[var(--line)] text-sm">
+                  <div className="flex flex-col md:flex-row md:justify-between py-3.5 border-b border-[var(--line)] text-sm">
                     <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">LOCATION</span>
                     <span className="text-[var(--fg)]">Anaheim, CA</span>
                   </div>
-                  <div className="flex justify-between py-3.5 border-b border-[var(--line)] text-sm">
+                  <div className="flex flex-col md:flex-row md:justify-between py-3.5 border-b border-[var(--line)] text-sm">
                     <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">RESUME</span>
                     <a href={resumePdf} target="_blank" className="text-[var(--fg)] hover:text-[var(--teal)]">download ↗</a>
                   </div>
