@@ -1,19 +1,7 @@
-// import ipoImg from './assets/ipo.png' — only used by the commented-out ipo-analyzer entry below
 import optionsImg from './assets/options.png'
 import pokemonImg from './assets/pokemon.png'
 
-// This array is the single source of truth for project data, consumed by ProjectDetail.tsx
-// (via useParams + slug lookup). Note there's no explicit TypeScript `interface`/`type` here —
-// TS infers the shape of `projects` (and therefore of `project.title`, `project.stack: string[]`,
-// etc. in ProjectDetail) purely from these object literals. That's convenient for a small file
-// like this, but an interviewer might ask "why not define an explicit Project type?" — the
-// tradeoff is that inferred types give weaker guarantees (e.g. nothing stops one object here
-// from accidentally omitting a field or misspelling `status` as `'live '`) versus an explicit
-// type/interface that all entries are checked against and that other files could import and reuse.
 export const projects = [
-    // ipo-analyzer removed from the list for now — it still exists (see git history / the
-    // commented-out card in App.tsx), just excluded from display and from the "next project"
-    // cycling in ProjectDetail.tsx, since that cycling walks this exact array.
     /*
     {
         slug: 'ipo-analyzer',

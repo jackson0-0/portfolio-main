@@ -1,6 +1,5 @@
 import './App.css'
 import About from './About'
-// import ipoImg from './assets/ipo.png' — only used by the commented-out IPO card below
 import optionsImg from './assets/options.png'
 import pokemonImg from './assets/pokemon.png'
 import resumePdf from './assets/JacksonLamResume.pdf?url'
@@ -16,9 +15,7 @@ function App() {
   const [copied, setCopied] = useState(false)
   //clicking it sets it to true which then changes text to copied
   const [menuOpen, setMenuOpen] = useState(false)
-  //tracks whether the mobile nav dropdown is open, only used below the md breakpoint
   const [formState, handleSubmit] = useForm('xyeyqzly')
-  //Formspree hook: formState.submitting/succeeded/errors + handleSubmit to wire onSubmit
 
   const copyEmail = () => {
     navigator.clipboard.writeText('jacksonlam510@gmail.com')
@@ -45,14 +42,11 @@ function App() {
       <Route path="/" element={
         <>
 
-          {/* sticky wrapper holds header + mobile dropdown together, so the dropdown (positioned
-              absolute below) stays anchored under the header instead of scrolling away */}
           <div className="sticky top-0 z-50">
           <header className="grid grid-cols-[1fr_auto_1fr] items-center px-8 py-4 bg-[var(--bg)]/90 backdrop-blur border-b border-[var(--line)]">
             <div className="text-lg font-[family-name:var(--font-title)] text-[var(--fg)]">
               jackson<span className="text-[var(--teal)]">.</span>lam
             </div>
-            {/* hidden md:flex — nav row only shows at/above the md breakpoint (768px) */}
             <nav className="hidden md:flex gap-8 text-sm text-[var(--fg-dim)] justify-self-center">
               <Link to="/about" className="hover:text-[var(--fg)]">About</Link>
               <a href="#projects" className="hover:text-[var(--fg)]">Projects</a>
@@ -64,15 +58,12 @@ function App() {
             </nav>
             <div className="flex items-center gap-4 justify-self-end font-[family-name:var(--font-small)] text-sm text-[var(--fg)]">
               {time}
-              {/* hamburger button — mirror of the nav above, only visible below md */}
               <button className="md:hidden text-lg leading-none" onClick={() => setMenuOpen(!menuOpen)}>
                 {menuOpen ? '✕' : '☰'}
               </button>
             </div>
           </header>
 
-          {/* mobile dropdown — only rendered when menuOpen, absolute so it overlays the page
-              content below instead of pushing it down / scrolling away with it */}
           {menuOpen && (
             <div className="md:hidden absolute inset-x-0 top-full flex flex-col gap-4 px-8 py-6 text-sm text-[var(--fg-dim)] bg-[var(--bg)] border-b border-[var(--line)]">
               <Link to="/about" onClick={() => setMenuOpen(false)} className="hover:text-[var(--fg)]">About</Link>
@@ -131,7 +122,7 @@ function App() {
               <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">01 / demos</span>
             </div>
 
-            {/* IPO Calendar & Analyzer card — commented out for now
+            {/*
             <div className="grid grid-cols-2 border border-[var(--line)] mb-6 min-h-[280px]">
               <div className="border-r border-[var(--line)] overflow-hidden">
                 <img src={ipoImg} alt="IPO Calendar & Analyzer screenshot" className="w-full h-full object-cover" />
@@ -154,8 +145,6 @@ function App() {
             </div>
             */}
 
-            {/* grid-cols-1 stacks image above text on mobile; md:grid-cols-2 restores
-                side-by-side once there's room for both */}
             <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--line)] mb-6 min-h-[280px]">
               <div className="border-r border-[var(--line)] overflow-hidden">
                 <img src={optionsImg} alt="Options Analytics Dashboard screenshot" className="w-full h-full object-cover" />
@@ -298,13 +287,9 @@ function App() {
               available now — replies within 24h
             </div>
 
-            {/* grid-cols-1 stacks the info list above the form on mobile; md:grid-cols-2 puts
-                them side by side once there's room for both */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div>
                 <div className="border-t border-[var(--line)]">
-                  {/* flex-col stacks label above value on mobile so long values don't overlap
-                      the label; md:flex-row md:justify-between restores the side-by-side row */}
                   <div className="flex flex-col md:flex-row md:justify-between py-3.5 border-b border-[var(--line)] text-sm">
                     <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">EMAIL</span>
                     <button onClick={copyEmail} className="text-[var(--fg)] hover:text-[var(--teal)]">{copied ? 'copied!' : 'jacksonlam510@gmail.com'}</button>
@@ -332,13 +317,9 @@ function App() {
                 </div>
               </div>
 
-              {/* formState.succeeded flips true once Formspree confirms the submission — show a
-                  thank-you message instead of the form in that case */}
               {formState.succeeded ? (
                 <div className="text-sm text-[var(--fg)]">Thanks — I'll get back to you soon.</div>
               ) : (
-                // onSubmit={handleSubmit} replaces the native page-reloading form submission with
-                // Formspree's handler; every input needs a `name` so Formspree can label it
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                   <div>
                     <label className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] block mb-1.5">NAME</label>
@@ -356,7 +337,6 @@ function App() {
                     <label className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] block mb-1.5">MESSAGE</label>
                     <textarea name="message" placeholder="Tell me a bit about what you're working on." className="w-full bg-transparent border border-[var(--line)] text-[var(--fg)] px-3 py-2.5 text-sm min-h-[110px] focus:outline-none focus:border-[var(--teal)]"></textarea>
                   </div>
-                  {/* disabled while submitting, so a slow connection can't send it twice */}
                   <button type="submit" disabled={formState.submitting} className="self-start bg-[var(--teal)] text-black text-sm px-6 py-3 font-[family-name:var(--font-small)] mt-1 disabled:opacity-50">
                     {formState.submitting ? 'sending...' : 'send message →'}
                   </button>
