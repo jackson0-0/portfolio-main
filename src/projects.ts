@@ -1,3 +1,7 @@
+// import ipoImg from './assets/ipo.png' — only used by the commented-out ipo-analyzer entry below
+import optionsImg from './assets/options.png'
+import pokemonImg from './assets/pokemon.png'
+
 // This array is the single source of truth for project data, consumed by ProjectDetail.tsx
 // (via useParams + slug lookup). Note there's no explicit TypeScript `interface`/`type` here —
 // TS infers the shape of `projects` (and therefore of `project.title`, `project.stack: string[]`,
@@ -7,9 +11,14 @@
 // from accidentally omitting a field or misspelling `status` as `'live '`) versus an explicit
 // type/interface that all entries are checked against and that other files could import and reuse.
 export const projects = [
+    // ipo-analyzer removed from the list for now — it still exists (see git history / the
+    // commented-out card in App.tsx), just excluded from display and from the "next project"
+    // cycling in ProjectDetail.tsx, since that cycling walks this exact array.
+    /*
     {
         slug: 'ipo-analyzer',
         status: 'live',
+        image: ipoImg,
         title: 'IPO Calendar and Analyzer',
         description: "A site that tracks upcoming IPOs and uses AI to break down each filing so it's actually readable. Runs on AWS Lambda.",
         stack: ['AWS Lambda', 'Node.js', 'MongoDB'],
@@ -18,9 +27,11 @@ export const projects = [
         problem: "I wanted to keep track of upcoming IPOs but every site either buried the info or you had to read through a 100+ page filing just to understand what a company actually does.",
         build: "I set up a scheduled job on Lambda that pulls new filings automatically, then runs each one through an AI pass to summarize it in plain English instead of legal/finance jargon. Was my first time working with scheduled cloud functions instead of just building something that runs when a user clicks a button.",
     },
+    */
     {
         slug: 'options-dashboard',
         status: 'live',
+        image: optionsImg,
         title: 'Options Analytics Dashboard',
         description: "Still building this one — a dashboard for looking at options chains without needing five different tabs open.",
         stack: ['React', 'FastAPI', 'PostgreSQL'],
@@ -32,6 +43,7 @@ export const projects = [
     {
         slug: 'pokemon-team-builder',
         status: 'live',
+        image: pokemonImg,
         title: 'Pokémon Team Builder',
         description: "A tool for building and testing Pokémon teams without doing the type-coverage math in your head.",
         stack: ['React', 'Node.js', 'MongoDB'],

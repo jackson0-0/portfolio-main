@@ -1,87 +1,59 @@
 import './App.css'
 import About from './About'
-import ipoImg from './assets/ipo.png'
+// import ipoImg from './assets/ipo.png' — only used by the commented-out IPO card below
 import optionsImg from './assets/options.png'
 import pokemonImg from './assets/pokemon.png'
 import resumePdf from './assets/JacksonLamResume.pdf?url'
 import { useState, useEffect } from 'react'
+import { useForm } from '@formspree/react'
 import { Routes, Route, Link } from 'react-router-dom'
 import ProjectDetail from './ProjectDetail'
 import ImageDemo from './ImageDemo'
 
 function App() {
-  // useState returns a [value, setter] pair. Calling the setter schedules a re-render with
-  // the new value — React doesn't mutate `time` in place, it replaces it. Starting at '' (not
-  // the real time) avoids a server/client mismatch if this were ever server-rendered, and gives
-  // the effect below a single place to compute the first real value.
   const [time, setTime] = useState('')
+  //empty when pages loads
   const [copied, setCopied] = useState(false)
-  // Tracks whether the mobile nav dropdown is open. Only used below `md:` — on wider screens
-  // the full nav is always visible and this is ignored.
+  //clicking it sets it to true which then changes text to copied
   const [menuOpen, setMenuOpen] = useState(false)
+  //tracks whether the mobile nav dropdown is open, only used below the md breakpoint
+  const [formState, handleSubmit] = useForm('xyeyqzly')
+  //Formspree hook: formState.submitting/succeeded/errors + handleSubmit to wire onSubmit
 
-  // Event handler for the email button. navigator.clipboard.writeText is the async Clipboard
-  // API (requires a secure context — https or localhost). We don't await it here since we don't
-  // need to block on it; we optimistically flip `copied` to true immediately for instant UI
-  // feedback, then flip it back after 1.5s with setTimeout — a common "temporary confirmation
-  // state" pattern (e.g. "copied!" toasts).
   const copyEmail = () => {
     navigator.clipboard.writeText('jacksonlam510@gmail.com')
+    //copies to clipboard 
     setCopied(true)
+    //setter changes copied  == true 
     setTimeout(() => setCopied(false), 1500)
+    //after 1.5 seconds it flips copied back to false 
   }
 
-  // useEffect runs side effects (things outside React's render-return-JSX model, like timers,
-  // subscriptions, or DOM/browser APIs). The empty dependency array [] means this effect runs
-  // once, after the first render (mount) — not on every re-render.
   useEffect(() => {
     const tick = () => {
       setTime(new Date().toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' }))
     }
-    // Call tick() immediately so the clock shows a value right away, instead of staying blank
-    // for the first second until the interval's first callback fires.
     tick()
     const interval = setInterval(tick, 1000)
-    // The function returned from useEffect is a cleanup function. React calls it when the
-    // component unmounts (or before re-running the effect, if the deps array weren't empty).
-    // Without clearing the interval here, it would keep firing forever after unmount — a
-    // classic React memory leak / "setState on an unmounted component" bug.
-    return () => clearInterval(interval)
+    return () => clearInterval(interval) //cleanup, stop tick running when off page
   }, [])
+  // tick gets the current time, and setsTime to curr time,we run tick then every second we are on the page
+  //timing : [] stops the effect from running when we are off the page 
 
   return (
-    // Routes/Route implement client-side routing: React Router matches the current URL against
-    // each Route's `path` and renders that Route's `element` — no full page reload/server
-    // round-trip. This first Route matches the exact "/" path and renders the whole one-page
-    // portfolio layout below as a JSX Fragment.
     <Routes>
       <Route path="/" element={
-        // A Fragment (<>...</>) groups sibling elements (header, sections, footer) into one
-        // value without adding an extra wrapper element to the actual DOM.
         <>
-          {/* `sticky top-0 z-50` keeps this whole wrapper (header + mobile dropdown) pinned to
-              the viewport top while scrolling (position: sticky) and stacks it above other
-              content (z-index). It moved here from the header itself so the dropdown below —
-              positioned `absolute` relative to this sticky box — stays anchored under the header
-              no matter how far the page has scrolled, instead of scrolling away with the page. */}
+
+          {/* sticky wrapper holds header + mobile dropdown together, so the dropdown (positioned
+              absolute below) stays anchored under the header instead of scrolling away */}
           <div className="sticky top-0 z-50">
-          {/* The `var(--x)` values inside Tailwind's square-bracket "arbitrary value" syntax
-              (e.g. bg-[var(--bg)]) reference CSS custom properties defined once in index.css
-              (:root { --bg: ...; }) — a common pattern for keeping a design system's tokens
-              (colors, fonts) in one place instead of repeating raw hex codes across every
-              className. */}
           <header className="grid grid-cols-[1fr_auto_1fr] items-center px-8 py-4 bg-[var(--bg)]/90 backdrop-blur border-b border-[var(--line)]">
             <div className="text-lg font-[family-name:var(--font-title)] text-[var(--fg)]">
               jackson<span className="text-[var(--teal)]">.</span>lam
             </div>
-            {/* `hidden md:flex` — invisible below the md breakpoint (768px), a flex row at/above
-                it. This is the same nav as before, just switched off on mobile since 7 items
-                have nowhere to fit on a narrow screen. */}
+            {/* hidden md:flex — nav row only shows at/above the md breakpoint (768px) */}
             <nav className="hidden md:flex gap-8 text-sm text-[var(--fg-dim)] justify-self-center">
-              {/* <Link> (React Router) intercepts the click and uses the History API to swap
-                  routes client-side — no full page reload. A plain <a href> below, by contrast,
-                  is a same-page hash anchor (browser-native scroll-to-element, no router
-                  involved at all — different mechanism, same visual effect on this one page). */}
               <Link to="/about" className="hover:text-[var(--fg)]">About</Link>
               <a href="#projects" className="hover:text-[var(--fg)]">Projects</a>
               <a href="#skills" className="hover:text-[var(--fg)]">Skills</a>
@@ -92,21 +64,15 @@ function App() {
             </nav>
             <div className="flex items-center gap-4 justify-self-end font-[family-name:var(--font-small)] text-sm text-[var(--fg)]">
               {time}
-              {/* Hamburger button — mirror image of the nav above: hidden at/above md, visible
-                  only on mobile. Toggles the `menuOpen` state, which the dropdown below reads. */}
+              {/* hamburger button — mirror of the nav above, only visible below md */}
               <button className="md:hidden text-lg leading-none" onClick={() => setMenuOpen(!menuOpen)}>
                 {menuOpen ? '✕' : '☰'}
               </button>
             </div>
           </header>
 
-          {/* The mobile dropdown itself: only rendered when menuOpen is true, and `md:hidden`
-              so even if it were open it can never show once the screen is wide enough for the
-              real nav. Same links as above, just stacked vertically instead of in a row.
-              `absolute inset-x-0 top-full` takes it out of normal document flow and pins it to
-              the bottom edge of the sticky wrapper above (its nearest positioned ancestor) —
-              that's what makes it float OVER the page content below instead of pushing that
-              content down and then scrolling away with it. */}
+          {/* mobile dropdown — only rendered when menuOpen, absolute so it overlays the page
+              content below instead of pushing it down / scrolling away with it */}
           {menuOpen && (
             <div className="md:hidden absolute inset-x-0 top-full flex flex-col gap-4 px-8 py-6 text-sm text-[var(--fg-dim)] bg-[var(--bg)] border-b border-[var(--line)]">
               <Link to="/about" onClick={() => setMenuOpen(false)} className="hover:text-[var(--fg)]">About</Link>
@@ -120,10 +86,6 @@ function App() {
           )}
           </div>
 
-          {/* Each section below has an `id`. The nav's `href="#projects"` etc. are plain
-              same-page anchor links — the browser jumps to whichever element has that id, no
-              JS/router required. That's why "About"/"Demo" (real routed pages) use <Link> above
-              while these use <a>: different navigation targets need different mechanisms. */}
           <section id="home" className="px-8 py-24 max-w-5xl mx-auto">
             <div className="flex items-center gap-2 text-sm text-[var(--teal)] mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--teal)]"></span>
@@ -169,9 +131,8 @@ function App() {
               <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">01 / demos</span>
             </div>
 
-            {/* grid-cols-1 (mobile default) stacks image above text; md:grid-cols-2 restores
-                the side-by-side layout once the screen is wide enough for both to fit. */}
-            <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--line)] mb-6 min-h-[280px]">
+            {/* IPO Calendar & Analyzer card — commented out for now
+            <div className="grid grid-cols-2 border border-[var(--line)] mb-6 min-h-[280px]">
               <div className="border-r border-[var(--line)] overflow-hidden">
                 <img src={ipoImg} alt="IPO Calendar & Analyzer screenshot" className="w-full h-full object-cover" />
               </div>
@@ -191,9 +152,10 @@ function App() {
                 </Link>
               </div>
             </div>
+            */}
 
-            {/* grid-cols-1 (mobile default) stacks image above text; md:grid-cols-2 restores
-                the side-by-side layout once the screen is wide enough for both to fit. */}
+            {/* grid-cols-1 stacks image above text on mobile; md:grid-cols-2 restores
+                side-by-side once there's room for both */}
             <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--line)] mb-6 min-h-[280px]">
               <div className="border-r border-[var(--line)] overflow-hidden">
                 <img src={optionsImg} alt="Options Analytics Dashboard screenshot" className="w-full h-full object-cover" />
@@ -283,17 +245,6 @@ function App() {
             <div className="border-l-2 border-[var(--line)] pl-7 flex flex-col gap-10">
               <div className="relative">
                 <span className="absolute -left-[33px] top-1 w-2.5 h-2.5 rounded-full bg-[var(--teal)]"></span>
-                <div className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] mb-2">2026 — present</div>
-                <h3 className="text-lg text-[var(--fg)] mb-1">Freelance Software Developer</h3>
-                <div className="text-sm text-[var(--teal)] mb-3">Independent</div>
-                <ul className="list-disc list-inside flex flex-col gap-1.5">
-                  <li className="text-sm text-[var(--fg-dim)] leading-relaxed">Full-stack client builds in React, FastAPI, and Node, deployed on AWS and Google Cloud.</li>
-                  <li className="text-sm text-[var(--fg-dim)] leading-relaxed">Own each project end to end — scoping, architecture, build, and deployment.</li>
-                </ul>
-              </div>
-
-              <div className="relative">
-                <span className="absolute -left-[33px] top-1 w-2.5 h-2.5 rounded-full bg-[var(--teal)]"></span>
                 <div className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] mb-2">2025 — present</div>
                 <h3 className="text-lg text-[var(--fg)] mb-1">Computer Science — CSULB</h3>
                 <div className="text-sm text-[var(--teal)] mb-3">California State University, Long Beach</div>
@@ -318,7 +269,7 @@ function App() {
                 <h3 className="text-lg text-[var(--fg)] mb-1">Nebius x NVIDIA Global AI Hackathon</h3>
                 <div className="text-sm text-[var(--teal)] mb-3">Building</div>
                 <ul className="list-disc list-inside flex flex-col gap-1.5 mb-4">
-                  <li className="text-sm text-[var(--fg-dim)] leading-relaxed">Building an AI system on Nebius Token Factory / AI Cloud using an NVIDIA Nemotron open-source model.</li>
+                  <li className="text-sm text-[var(--fg-dim)] leading-relaxed">Building an AI system on Nebius AI Cloud using NVIDIA Nemotron</li>
                 </ul>
                 <div className="flex flex-wrap gap-2 mb-4">
                   <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] border border-[var(--line)] px-2 py-1">Nebius Token Factory</span>
@@ -348,17 +299,12 @@ function App() {
             </div>
 
             {/* grid-cols-1 stacks the info list above the form on mobile; md:grid-cols-2 puts
-                them side by side once there's room for both. */}
+                them side by side once there's room for both */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div>
-                <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] mb-2 block">BOOK A 30 MIN CALL</span>
-                <a href="https://cal.com/jackson-lam-uzx9ef/30min" target="_blank" className="block text-center font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] border border-[var(--line)] py-2 mb-9 hover:border-[var(--teal)] hover:text-[var(--teal)]">
-                  see open times →
-                </a>
                 <div className="border-t border-[var(--line)]">
-                  {/* flex-col stacks label above value on mobile (fixes them overlapping when
-                      squeezed onto one row); md:flex-row md:justify-between restores the
-                      side-by-side layout once there's enough width. */}
+                  {/* flex-col stacks label above value on mobile so long values don't overlap
+                      the label; md:flex-row md:justify-between restores the side-by-side row */}
                   <div className="flex flex-col md:flex-row md:justify-between py-3.5 border-b border-[var(--line)] text-sm">
                     <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">EMAIL</span>
                     <button onClick={copyEmail} className="text-[var(--fg)] hover:text-[var(--teal)]">{copied ? 'copied!' : 'jacksonlam510@gmail.com'}</button>
@@ -386,34 +332,36 @@ function App() {
                 </div>
               </div>
 
-              {/* These inputs are "uncontrolled" — no `value`/`onChange` wiring them to React
-                  state, so React isn't tracking what the user types; the DOM owns that state
-                  itself (like a plain HTML form). The "controlled vs uncontrolled" distinction
-                  is a classic React interview question. There's also no onSubmit handler here,
-                  so clicking "send message →" currently falls back to the browser's native form
-                  submission — with no `action` attribute, that just reloads the current page and
-                  does nothing useful; this form isn't wired up to actually send anything yet. */}
-              <form className="flex flex-col gap-4">
-                <div>
-                  <label className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] block mb-1.5">NAME</label>
-                  <input type="text" placeholder="Jane Smith" className="w-full bg-transparent border border-[var(--line)] text-[var(--fg)] px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--teal)]" />
-                </div>
-                <div>
-                  <label className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] block mb-1.5">EMAIL</label>
-                  <input type="email" placeholder="jane@company.com" className="w-full bg-transparent border border-[var(--line)] text-[var(--fg)] px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--teal)]" />
-                </div>
-                <div>
-                  <label className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] block mb-1.5">WHAT'S THIS ABOUT</label>
-                  <input type="text" placeholder="internship, freelance project, just saying hi..." className="w-full bg-transparent border border-[var(--line)] text-[var(--fg)] px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--teal)]" />
-                </div>
-                <div>
-                  <label className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] block mb-1.5">MESSAGE</label>
-                  <textarea placeholder="Tell me a bit about what you're working on." className="w-full bg-transparent border border-[var(--line)] text-[var(--fg)] px-3 py-2.5 text-sm min-h-[110px] focus:outline-none focus:border-[var(--teal)]"></textarea>
-                </div>
-                <button type="submit" className="self-start bg-[var(--teal)] text-black text-sm px-6 py-3 font-[family-name:var(--font-small)] mt-1">
-                  send message →
-                </button>
-              </form>
+              {/* formState.succeeded flips true once Formspree confirms the submission — show a
+                  thank-you message instead of the form in that case */}
+              {formState.succeeded ? (
+                <div className="text-sm text-[var(--fg)]">Thanks — I'll get back to you soon.</div>
+              ) : (
+                // onSubmit={handleSubmit} replaces the native page-reloading form submission with
+                // Formspree's handler; every input needs a `name` so Formspree can label it
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                  <div>
+                    <label className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] block mb-1.5">NAME</label>
+                    <input type="text" name="name" placeholder="Jane Smith" className="w-full bg-transparent border border-[var(--line)] text-[var(--fg)] px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--teal)]" />
+                  </div>
+                  <div>
+                    <label className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] block mb-1.5">EMAIL</label>
+                    <input type="email" name="email" placeholder="jane@company.com" className="w-full bg-transparent border border-[var(--line)] text-[var(--fg)] px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--teal)]" />
+                  </div>
+                  <div>
+                    <label className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] block mb-1.5">WHAT'S THIS ABOUT</label>
+                    <input type="text" name="subject" placeholder="internship, freelance project, just saying hi..." className="w-full bg-transparent border border-[var(--line)] text-[var(--fg)] px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--teal)]" />
+                  </div>
+                  <div>
+                    <label className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)] block mb-1.5">MESSAGE</label>
+                    <textarea name="message" placeholder="Tell me a bit about what you're working on." className="w-full bg-transparent border border-[var(--line)] text-[var(--fg)] px-3 py-2.5 text-sm min-h-[110px] focus:outline-none focus:border-[var(--teal)]"></textarea>
+                  </div>
+                  {/* disabled while submitting, so a slow connection can't send it twice */}
+                  <button type="submit" disabled={formState.submitting} className="self-start bg-[var(--teal)] text-black text-sm px-6 py-3 font-[family-name:var(--font-small)] mt-1 disabled:opacity-50">
+                    {formState.submitting ? 'sending...' : 'send message →'}
+                  </button>
+                </form>
+              )}
             </div>
           </section>
 
@@ -425,10 +373,6 @@ function App() {
       } />
       <Route path="/about" element={<About />} />
       <Route path="/demo" element={<ImageDemo />} />
-      {/* `:slug` is a dynamic route parameter — this Route matches any path shaped like
-          /projects/anything and renders ProjectDetail, which reads the actual value ("anything")
-          back out via the useParams() hook. This is how one component renders three different
-          project pages instead of writing three separate components/routes. */}
       <Route path="/projects/:slug" element={<ProjectDetail />} />
     </Routes>
   )

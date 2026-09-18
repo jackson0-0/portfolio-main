@@ -58,13 +58,12 @@ function ProjectDetail() {
                 </div>
 
                 <div className="flex gap-4 mb-10">
-                    <a href={project.liveUrl} target="_blank" className="font-[family-name:var(--font-small)] text-xs px-5 py-3 bg-[var(--teal)] text-black">visit live site &#8599;</a>
                     <a href={project.sourceUrl} target="_blank" className="font-[family-name:var(--font-small)] text-xs px-5 py-3 border border-[var(--line)] text-[var(--fg-dim)]">view source</a>
                 </div>
             </div>
 
-            <div className="max-w-4xl mx-auto px-8 mb-10 aspect-video border border-[var(--line)] flex items-center justify-center">
-                <span className="font-[family-name:var(--font-small)] text-xs text-[var(--fg-dim)]">full screenshot / demo gif</span>
+            <div className="max-w-4xl mx-auto px-8 mb-10 aspect-video border border-[var(--line)] overflow-hidden">
+                <img src={project.image} alt={`${project.title} screenshot`} className="w-full h-full object-cover" />
             </div>
 
             {/* Same fix as App.tsx's project cards/contact section: grid-cols-1 stacks Problem
