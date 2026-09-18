@@ -1,3 +1,11 @@
+// This array is the single source of truth for project data, consumed by ProjectDetail.tsx
+// (via useParams + slug lookup). Note there's no explicit TypeScript `interface`/`type` here —
+// TS infers the shape of `projects` (and therefore of `project.title`, `project.stack: string[]`,
+// etc. in ProjectDetail) purely from these object literals. That's convenient for a small file
+// like this, but an interviewer might ask "why not define an explicit Project type?" — the
+// tradeoff is that inferred types give weaker guarantees (e.g. nothing stops one object here
+// from accidentally omitting a field or misspelling `status` as `'live '`) versus an explicit
+// type/interface that all entries are checked against and that other files could import and reuse.
 export const projects = [
     {
         slug: 'ipo-analyzer',
